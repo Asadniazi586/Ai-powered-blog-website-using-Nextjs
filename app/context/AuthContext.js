@@ -1,5 +1,5 @@
 'use client'
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 
 const AuthContext = createContext();
@@ -10,6 +10,15 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  // Define logout first with useCallback
+  const logout = useCallback(() => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setToken(null);
+    setUser(null);
+    router.push('/');
+  }, [router]);
+
   useEffect(() => {
     const initializeAuth = async () => {
       const storedToken = localStorage.getItem('token');
@@ -17,7 +26,6 @@ export const AuthProvider = ({ children }) => {
       
       if (storedToken && storedUser) {
         try {
-          // Verify token validity here if needed
           setToken(storedToken);
           setUser(JSON.parse(storedUser));
         } catch (error) {
@@ -28,12 +36,11 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     };
     initializeAuth();
-  // ✅ Fixed: Added logout to dependency array
-  }, [logout]);
+  }, [logout]); // Now logout is properly defined before use
 
   const login = async (email, password) => {
     try {
-      const response = await fetch('/api/auth/login', { // Updated endpoint
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,7 +54,6 @@ export const AuthProvider = ({ children }) => {
         throw new Error(data.error || 'Login failed');
       }
 
-      // Store user data including email and role
       const userData = { 
         email,
         role: data.role 
@@ -94,14 +100,6 @@ export const AuthProvider = ({ children }) => {
       console.error('Signup error:', error);
       throw error;
     }
-  };
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setToken(null);
-    setUser(null);
-    router.push('/');
   };
 
   return (
