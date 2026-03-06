@@ -10,10 +10,8 @@ const nextConfig = {
         ignoreBuildErrors: true,
     },
     
-    // Configure external packages for server components
-    experimental: {
-        serverComponentsExternalPackages: ['mongoose', 'bcryptjs'],
-    },
+    // ✅ FIXED: Use serverExternalPackages instead of serverComponentsExternalPackages
+    serverExternalPackages: ['mongoose', 'bcryptjs'],
 };
 
 export default nextConfig;

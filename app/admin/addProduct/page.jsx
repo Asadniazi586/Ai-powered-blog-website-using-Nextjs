@@ -1,6 +1,6 @@
+'use client'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
-'use client'
 import { assets } from '@/app/Assets/assets'
 import axios from 'axios'
 import Image from 'next/image'
