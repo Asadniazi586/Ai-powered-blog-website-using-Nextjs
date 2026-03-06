@@ -3,7 +3,7 @@ import { useAuth } from '@/app/context/AuthContext';
 import { usePathname } from 'next/navigation';
 import LoginPage from "./auth/login/page";
 import SignupPage from "./auth/signup/page";
-import HomePage from "./HomePage.client";
+import HomePage from "./Homepage.client";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
