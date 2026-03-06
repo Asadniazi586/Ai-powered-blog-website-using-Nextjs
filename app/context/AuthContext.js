@@ -28,7 +28,8 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     };
     initializeAuth();
-  }, []);
+  // ✅ Fixed: Added logout to dependency array
+  }, [logout]);
 
   const login = async (email, password) => {
     try {
