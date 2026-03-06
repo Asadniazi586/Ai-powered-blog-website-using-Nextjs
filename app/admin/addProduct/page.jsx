@@ -1,7 +1,8 @@
 'use client'
 
+// Change from 'revalidate' to something else
 export const dynamic = 'force-dynamic'
-export const revalidate = 0
+
 
 import { assets } from '@/app/Assets/assets'
 import axios from 'axios'
@@ -19,6 +20,7 @@ import HorizontalRule from '@tiptap/extension-horizontal-rule'
 import '@/app/styles/tiptapEditor.css'
 
 const Page = () => {
+  // ... rest of your component code stays exactly the same
   const [image, setImage] = useState(null)
   const [loading, setLoading] = useState(false)
   const [generating, setGenerating] = useState(false)
