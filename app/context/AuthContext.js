@@ -84,17 +84,8 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Signup failed');
 
-      const userData = {
-        email,
-        role: data.role,
-        username
-      };
-
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(userData));
-      setToken(data.token);
-      setUser(userData);
-
+      // ❌ Removed automatic login after signup
+      // Now signup just creates the user, frontend can redirect to login page
       return data;
     } catch (error) {
       console.error('Signup error:', error);

@@ -21,6 +21,15 @@ const userSchema = new mongoose.Schema({
     enum: ["user", "admin"],
     default: "user"
   },
+
+  // ✅ ADD THESE TWO
+  resetToken: {
+    type: String
+  },
+  resetTokenExpiry: {
+    type: Date
+  },
+
   createdAt: {
     type: Date,
     default: Date.now
@@ -34,7 +43,7 @@ userSchema.pre("save", async function(next) {
   next();
 });
 
-// Method to compare passwords
+// Compare password
 userSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
