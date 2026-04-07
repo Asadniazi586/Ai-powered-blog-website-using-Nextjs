@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'react-toastify';
 
 export default function SignupPage() {
   const { user, signup } = useAuth();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -19,23 +19,53 @@ export default function SignupPage() {
     }
   }, [user, router]);
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError('');
-  setLoading(true);
+  const validateForm = () => {
+    if (!username.trim()) {
+      toast.error('Username is required');
+      return false;
+    }
+    if (username.length < 3) {
+      toast.error('Username must be at least 3 characters');
+      return false;
+    }
+    if (!email.trim()) {
+      toast.error('Email is required');
+      return false;
+    }
+    if (!email.includes('@') || !email.includes('.')) {
+      toast.error('Please enter a valid email address');
+      return false;
+    }
+    if (!password.trim()) {
+      toast.error('Password is required');
+      return false;
+    }
+    if (password.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return false;
+    }
+    return true;
+  };
 
-  try {
-    // Call signup API (creates user) but do NOT log in
-    await signup(username, email, password);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+    
+    setLoading(true);
 
-    // Redirect to login page
-    router.push('/auth/login');
-  } catch (err) {
-    setError(err.message);
-  } finally {
-    setLoading(false);
-  }
-};
+    try {
+      await signup(username, email, password);
+      toast.success('Account created successfully! Redirecting to login...');
+      setTimeout(() => {
+        router.push('/auth/login');
+      }, 2000);
+    } catch (err) {
+      toast.error(err.message || 'Signup failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 to-gray-100 px-4">
@@ -47,17 +77,11 @@ export default function SignupPage() {
           <p className="text-gray-500 text-sm mt-1">Join us and get started</p>
         </div>
 
-        {error && (
-          <div className="bg-red-100 text-red-700 px-4 py-2 rounded-md text-sm">
-            {error}
-          </div>
-        )}
-
         <form className="space-y-4" onSubmit={handleSubmit}>
           
           <input
             type="text"
-            placeholder="Username"
+            placeholder="Username (min. 3 characters)"
             required
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -75,7 +99,7 @@ export default function SignupPage() {
 
           <input
             type="password"
-            placeholder="Password"
+            placeholder="Password (min. 6 characters)"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}

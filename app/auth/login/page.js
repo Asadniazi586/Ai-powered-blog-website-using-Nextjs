@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'react-toastify';
 
 export default function LoginPage() {
   const { user, login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -28,29 +28,51 @@ export default function LoginPage() {
     }
   }, [user, router]);
 
+  const validateForm = () => {
+    if (!email.trim()) {
+      toast.error('Email is required');
+      return false;
+    }
+    if (!password.trim()) {
+      toast.error('Password is required');
+      return false;
+    }
+    if (!email.includes('@') || !email.includes('.')) {
+      toast.error('Please enter a valid email address');
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    
+    if (!validateForm()) return;
+    
     setLoading(true);
 
     try {
       const response = await login(email, password);
 
       if (response?.error) {
-        setError(response.error);
+        toast.error(response.error);
         return;
       }
 
       // Remember Me logic
       if (remember) {
         localStorage.setItem('rememberEmail', email);
+        toast.success('Email saved for next time');
       } else {
         localStorage.removeItem('rememberEmail');
       }
 
-      router.push('/');
+      toast.success('Login successful! Redirecting...');
+      setTimeout(() => {
+        router.push('/');
+      }, 1500);
     } catch (err) {
-      setError(err.message || 'Login failed. Please try again.');
+      toast.error(err.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -64,12 +86,6 @@ export default function LoginPage() {
           <h2 className="text-3xl font-bold text-gray-800">Welcome Back 👋</h2>
           <p className="text-gray-500 text-sm mt-1">Sign in to continue</p>
         </div>
-
-        {error && (
-          <div className="bg-red-100 text-red-700 px-4 py-2 rounded-md text-sm">
-            {error}
-          </div>
-        )}
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           
@@ -96,7 +112,14 @@ export default function LoginPage() {
               <input
                 type="checkbox"
                 checked={remember}
-                onChange={() => setRemember(!remember)}
+                onChange={() => {
+                  if (!remember) {
+                    toast.success('Email will be remembered');
+                  } else {
+                    toast.info('Email will not be saved');
+                  }
+                  setRemember(!remember);
+                }}
                 className="accent-indigo-600"
               />
               Remember me

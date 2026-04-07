@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 export default function ResetPasswordClient() {
   const searchParams = useSearchParams();
@@ -8,15 +9,35 @@ export default function ResetPasswordClient() {
   const router = useRouter();
 
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const validateForm = () => {
+    if (!password.trim()) {
+      toast.error('Password is required');
+      return false;
+    }
+    if (password.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return false;
+    }
+    if (!confirmPassword.trim()) {
+      toast.error('Please confirm your password');
+      return false;
+    }
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) return;
+    
     setLoading(true);
-    setMessage('');
-    setError('');
 
     try {
       const res = await fetch('/api/auth/reset-password', {
@@ -28,18 +49,18 @@ export default function ResetPasswordClient() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'Something went wrong');
+        toast.error(data.error || 'Something went wrong');
         return;
       }
 
-      setMessage('Password reset successful');
+      toast.success('Password reset successful! Redirecting to login...');
 
       setTimeout(() => {
         router.push('/auth/login');
       }, 2000);
 
     } catch (err) {
-      setError('Server error');
+      toast.error('Server error');
     } finally {
       setLoading(false);
     }
@@ -57,26 +78,23 @@ export default function ResetPasswordClient() {
           </p>
         </div>
 
-        {message && (
-          <div className="bg-green-100 text-green-700 px-4 py-2 rounded-md text-sm">
-            {message}
-          </div>
-        )}
-
-        {error && (
-          <div className="bg-red-100 text-red-700 px-4 py-2 rounded-md text-sm">
-            {error}
-          </div>
-        )}
-
         <form onSubmit={handleSubmit} className="space-y-4">
 
           <input
             type="password"
             required
-            placeholder="New password"
+            placeholder="New password (min. 6 characters)"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none"
+          />
+
+          <input
+            type="password"
+            required
+            placeholder="Confirm new password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
             className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none"
           />
 

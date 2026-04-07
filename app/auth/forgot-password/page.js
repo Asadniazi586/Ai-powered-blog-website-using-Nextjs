@@ -1,17 +1,29 @@
 'use client'
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const validateForm = () => {
+    if (!email.trim()) {
+      toast.error('Email is required');
+      return false;
+    }
+    if (!email.includes('@') || !email.includes('.')) {
+      toast.error('Please enter a valid email address');
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) return;
+    
     setLoading(true);
-    setMessage('');
-    setError('');
 
     try {
       const res = await fetch('/api/auth/forgot-password', {
@@ -25,13 +37,14 @@ export default function ForgotPassword() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'Something went wrong');
+        toast.error(data.error || 'Something went wrong');
         return;
       }
 
-      setMessage(data.message);
+      toast.success(data.message || 'Reset link sent to your email!');
+      setEmail('');
     } catch (err) {
-      setError('Server error. Try again later.');
+      toast.error('Server error. Try again later.');
     } finally {
       setLoading(false);
     }
@@ -48,18 +61,6 @@ export default function ForgotPassword() {
             Enter your email to reset password
           </p>
         </div>
-
-        {message && (
-          <div className="bg-green-100 text-green-700 px-4 py-2 rounded-md text-sm">
-            {message}
-          </div>
-        )}
-
-        {error && (
-          <div className="bg-red-100 text-red-700 px-4 py-2 rounded-md text-sm">
-            {error}
-          </div>
-        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           
@@ -79,7 +80,6 @@ export default function ForgotPassword() {
           >
             {loading ? 'Sending...' : 'Send Reset Link'}
           </button>
-
         </form>
 
       </div>

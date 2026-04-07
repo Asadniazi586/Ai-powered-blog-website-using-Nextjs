@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from 'react'
 import BlogItem from './BlogItem'
 import axios from 'axios'
+import Link from 'next/link'
 
 const BlogList = () => {
-    const [menu, setMenu] = useState('All')
     const [blogData, setBlogData] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
@@ -13,10 +13,15 @@ const BlogList = () => {
         try {
             setLoading(true)
             const response = await axios.get('/api/blog')
+            console.log('Full API Response:', response.data)
+            console.log('Number of blogs received:', response.data.blogs?.length)
+            console.log('All blogs:', response.data.blogs)
+
             const formattedData = response.data.blogs.map(blog => ({
                 ...blog,
                 description: blog.description || ''
             }))
+
             setBlogData(formattedData)
         } catch (err) {
             setError(err.message)
@@ -30,40 +35,66 @@ const BlogList = () => {
         fetchBlogData()
     }, [])
 
-   if (loading) return (
-    <div className="flex flex-col items-center justify-center py-10">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-2"></div>
-        <div>Loading blogs...</div>
-    </div>
-)
+    if (loading) return (
+        <div className="flex flex-col items-center justify-center py-10">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500 mb-2"></div>
+            <div className="text-sm">Loading blogs...</div>
+        </div>
+    )
 
     if (error) return <div className="text-center py-10 text-red-500">Error: {error}</div>
     if (!blogData.length) return <div className="text-center py-10">No blogs found</div>
 
-    const filteredBlogs = menu === 'All' 
-        ? blogData 
-        : blogData.filter(item => item.category === menu)
+    const categoryOrder = ['Politics', 'Wellness', 'Culture', 'Lifestyle']
+
+    const blogsByCategory = categoryOrder.reduce((acc, category) => {
+        acc[category] = blogData.filter(blog => blog.category === category)
+        return acc
+    }, {})
 
     return (
-        <div>
-            <div className='flex justify-center gap-6 my-10'>
-                <button onClick={() => setMenu('All')} className={menu === 'All' ? 'bg-gray-600 text-white py-1 px-4 rounded-sm' : ''}>All</button>
-                <button onClick={() => setMenu('Technology')} className={menu === 'Technology' ? 'bg-gray-600 text-white py-1 px-4 rounded-sm' : ''}>Technology</button>
-                <button onClick={() => setMenu('Startup')} className={menu === 'Startup' ? 'bg-gray-600 text-white py-1 px-4 rounded-sm' : ''}>Startup</button>
-                <button onClick={() => setMenu('Lifestyle')} className={menu === 'Lifestyle' ? 'bg-gray-600 text-white py-1 px-4 rounded-sm' : ''}>Lifestyle</button>
-            </div>
-            <div className='flex flex-wrap justify-around gap-1 gap-y-10 mb-16 xl:mx-24'>
-                {filteredBlogs.map((item) => (
-                    <BlogItem 
-                        key={item._id} 
-                        id={item._id} 
-                        image={item.image} 
-                        title={item.title} 
-                        description={item.description} 
-                        category={item.category}
-                    />
-                ))}
-            </div>
+        <div className="container mx-auto px-4">
+            {categoryOrder.map((category) => {
+                const categoryBlogs = blogsByCategory[category]
+                if (categoryBlogs.length === 0) return null
+
+                const visibleBlogs = categoryBlogs.slice(0, 4) // show only first 4
+
+                return (
+                    <div key={category} className="mb-12">
+                        {/* Category Heading */}
+                        <h2 className="text-2xl font-bold border-l-4 border-blue-500 pl-3 mb-6">
+                            {category}
+                        </h2>
+
+                        {/* Responsive Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                            {visibleBlogs.map((item) => (
+                                <BlogItem 
+                                    key={item._id} 
+                                    id={item._id} 
+                                    image={item.image} 
+                                    title={item.title} 
+                                    description={item.description} 
+                                    category={item.category}
+                                />
+                            ))}
+                        </div>
+
+                        {/* See More Button */}
+                        {categoryBlogs.length > 4 && (
+                            <div className="text-center mt-6">
+                                <Link 
+                                    href={`/category/${category.toLowerCase()}`}
+                                    className="inline-block px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-full hover:bg-blue-700 transition"
+                                >
+                                    See More →
+                                </Link>
+                            </div>
+                        )}
+                    </div>
+                )
+            })}
         </div>
     )
 }

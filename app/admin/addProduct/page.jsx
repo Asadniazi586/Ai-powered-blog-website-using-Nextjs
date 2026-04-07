@@ -1,6 +1,4 @@
 'use client'
-
-// Change from 'revalidate' to something else
 export const dynamic = 'force-dynamic'
 
 
@@ -20,14 +18,13 @@ import HorizontalRule from '@tiptap/extension-horizontal-rule'
 import '@/app/styles/tiptapEditor.css'
 
 const Page = () => {
-  // ... rest of your component code stays exactly the same
   const [image, setImage] = useState(null)
   const [loading, setLoading] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [data, setData] = useState({
     title: '',
     description: '',
-    category: 'Startup',
+    category: 'Politics',
     author: 'Asad Niazi',
     authorImg: '/author_img.png'
   })
@@ -105,6 +102,20 @@ const Page = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
+    // Validate required fields
+    if (!data.title.trim()) {
+      toast.error('Please enter a blog title')
+      return
+    }
+    if (!data.description || data.description === '<p></p>') {
+      toast.error('Please add content to your blog')
+      return
+    }
+    if (!image) {
+      toast.error('Please upload a thumbnail image')
+      return
+    }
+
     const formData = new FormData()
     formData.append('title', data.title)
     formData.append('description', data.description)
@@ -116,9 +127,14 @@ const Page = () => {
 
     try {
       setLoading(true)
-      const response = await axios.post('/api/blog', formData)
+      const response = await axios.post('/api/blog', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      
       if (response.data.success) {
-        toast.success(response.data.msg)
+        toast.success(response.data.msg || 'Blog added successfully!')
         setData({
           title: '',
           description: '',
@@ -129,10 +145,11 @@ const Page = () => {
         setImage(null)
         editor?.commands.clearContent()
       } else {
-        toast.error('Something went wrong.')
+        toast.error(response.data.error || 'Something went wrong.')
       }
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Server Error')
+      console.error('Submit Error:', error)
+      toast.error(error.response?.data?.error || 'Server Error. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -374,8 +391,9 @@ const Page = () => {
         value={data.category} 
         className='w-40 mt-4 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
       >
-        <option value="Startup">Startup</option>
-        <option value="Technology">Technology</option>
+        <option value="Politics">Politics</option>
+        <option value="Wellness">Wellness</option>
+        <option value="Culture">Culture</option>
         <option value="Lifestyle">Lifestyle</option>
       </select>
 
