@@ -1,11 +1,13 @@
 'use client';
 
 import Link from "next/link";
+import Footer from "../Components/Footer";
+import Navbar from "../Components/Navbar";
 
 export default function AboutPage() {
   return (
     <div className="bg-gradient-to-b from-gray-50 to-gray-100 min-h-screen">
-
+      <Navbar/>
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 text-white py-24 px-4 text-center">
         
@@ -129,7 +131,7 @@ export default function AboutPage() {
           Browse Articles →
         </Link>
       </section>
-
+            <Footer/>
     </div>
   );
 }

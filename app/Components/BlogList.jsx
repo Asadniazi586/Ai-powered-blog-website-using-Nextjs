@@ -13,10 +13,7 @@ const BlogList = () => {
         try {
             setLoading(true)
             const response = await axios.get('/api/blog')
-            console.log('Full API Response:', response.data)
-            console.log('Number of blogs received:', response.data.blogs?.length)
-            console.log('All blogs:', response.data.blogs)
-
+            
             const formattedData = response.data.blogs.map(blog => ({
                 ...blog,
                 description: blog.description || ''
@@ -58,7 +55,7 @@ const BlogList = () => {
                 const categoryBlogs = blogsByCategory[category]
                 if (categoryBlogs.length === 0) return null
 
-                const visibleBlogs = categoryBlogs.slice(0, 4) // show only first 4
+                const visibleBlogs = categoryBlogs.slice(0, 4)
 
                 return (
                     <div key={category} className="mb-12">
@@ -67,8 +64,8 @@ const BlogList = () => {
                             {category}
                         </h2>
 
-                        {/* Responsive Grid */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                        {/* Responsive Grid - Cards centered on mobile */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 justify-items-center">
                             {visibleBlogs.map((item) => (
                                 <BlogItem 
                                     key={item._id} 

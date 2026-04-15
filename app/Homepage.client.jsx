@@ -1,13 +1,16 @@
-// app/HomePage.client.jsx
 'use client';
+import Navbar from "./Components/Navbar";
+import Hero from "./Components/Hero";
+import Categories from "./Components/Categories";
 import BlogList from "./Components/BlogList";
 import Footer from "./Components/Footer";
-import Header from "./Components/Header";
 
 export default function HomePage() {
   return (
     <>
-      <Header />
+      <Navbar />
+      <Hero />
+      <Categories />
       <BlogList />
       <Footer />
     </>

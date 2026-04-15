@@ -28,7 +28,7 @@ const BlogItem = ({ image, title, description, category, id }) => {
   };
 
   return (
-    <div className='w-full max-w-[270px] bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1'>
+    <div className='w-full mx-auto max-w-[270px] bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1'>
       
       <Link href={`/blogs/${id}`}>
         <Image 
