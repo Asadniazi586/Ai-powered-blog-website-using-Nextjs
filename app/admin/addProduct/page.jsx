@@ -1,7 +1,6 @@
 'use client'
 export const dynamic = 'force-dynamic'
 
-
 import { assets } from '@/app/Assets/assets'
 import axios from 'axios'
 import Image from 'next/image'
@@ -102,7 +101,6 @@ const Page = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    // Validate required fields
     if (!data.title.trim()) {
       toast.error('Please enter a blog title')
       return
@@ -138,7 +136,7 @@ const Page = () => {
         setData({
           title: '',
           description: '',
-          category: 'Startup',
+          category: 'Politics',
           author: 'Asad Niazi',
           authorImg: '/author_img.png',
         })
@@ -157,262 +155,146 @@ const Page = () => {
 
   if (!editor) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-64">
         <div className="flex flex-col items-center">
-          <svg className="animate-spin h-12 w-12 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <svg className="animate-spin h-10 w-10 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          <p className="mt-4 text-lg text-gray-600">Loading editor...</p>
+          <p className="mt-3 text-sm text-gray-500">Loading editor...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <form className='pt-5 px-5 sm:pt-12 sm:pl-16' onSubmit={handleSubmit}>
-      <p className='text-xl font-medium text-gray-700'>Upload Thumbnail</p>
-      <label htmlFor="image" className="cursor-pointer">
-        {!image ? (
-          <div className="mt-4 border-2 border-dashed border-gray-300 rounded-lg p-4 w-36 h-24 flex items-center justify-center">
-            <Image 
-              src={assets.upload_area} 
-              width={140} 
-              height={70} 
-              alt='Upload Placeholder' 
-              className='object-contain'
-            />
-          </div>
-        ) : (
-          <div className="mt-4 border-2 border-dashed border-gray-300 rounded-lg p-1 w-36 h-24 flex items-center justify-center">
-            <img 
-              src={URL.createObjectURL(image)} 
-              width={140} 
-              height={70} 
-              alt='Thumbnail Preview' 
-              className='object-cover w-full h-full rounded-md'
-            />
-          </div>
-        )}
-      </label>
-      <input 
-        name='authorImg' 
-        type="file" 
-        onChange={(e) => setImage(e.target.files[0])} 
-        id='image' 
-        hidden 
-        required 
-      />
-
-      <p className='text-xl font-medium text-gray-700 mt-6'>Blog title</p>
-      <input 
-        onChange={handleChange} 
-        value={data.title} 
-        name='title' 
-        type="text" 
-        className='w-full sm:w-[500px] mt-4 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent' 
-        placeholder='Enter blog title' 
-        required 
-      />
-
-      <div className="w-full sm:w-[800px] mt-6">
-        <label className="text-xl font-medium text-gray-700">Content</label>
-        
-        {/* Editor Menu Bar */}
-        <div className="flex flex-wrap gap-1 p-2 border-t border-l border-r border-gray-300 bg-gray-50 rounded-t-md">
-          {/* Text formatting */}
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleBold().run()}
-            className={`p-2 rounded hover:bg-gray-200 ${editor.isActive('bold') ? 'bg-gray-200' : ''}`}
-            title="Bold"
-          >
-            <strong className="font-bold">B</strong>
-          </button>
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-            className={`p-2 rounded hover:bg-gray-200 ${editor.isActive('italic') ? 'bg-gray-200' : ''}`}
-            title="Italic"
-          >
-            <em className="italic">I</em>
-          </button>
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleUnderline().run()}
-            className={`p-2 rounded hover:bg-gray-200 ${editor.isActive('underline') ? 'bg-gray-200' : ''}`}
-            title="Underline"
-          >
-            <u className="underline">U</u>
-          </button>
-          
-          {/* Headings */}
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-            className={`p-2 rounded hover:bg-gray-200 ${editor.isActive('heading', { level: 1 }) ? 'bg-gray-200' : ''}`}
-            title="Heading 1"
-          >
-            <span className="font-bold text-lg">H1</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            className={`p-2 rounded hover:bg-gray-200 ${editor.isActive('heading', { level: 2 }) ? 'bg-gray-200' : ''}`}
-            title="Heading 2"
-          >
-            <span className="font-bold text-base">H2</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            className={`p-2 rounded hover:bg-gray-200 ${editor.isActive('heading', { level: 3 }) ? 'bg-gray-200' : ''}`}
-            title="Heading 3"
-          >
-            <span className="font-bold text-sm">H3</span>
-          </button>
-          
-          {/* Lists */}
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleBulletList().run()}
-            className={`p-2 rounded hover:bg-gray-200 ${editor.isActive('bulletList') ? 'bg-gray-200' : ''}`}
-            title="Bullet List"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="8" y1="6" x2="21" y2="6"></line>
-              <line x1="8" y1="12" x2="21" y2="12"></line>
-              <line x1="8" y1="18" x2="21" y2="18"></line>
-              <line x1="3" y1="6" x2="3.01" y2="6"></line>
-              <line x1="3" y1="12" x2="3.01" y2="12"></line>
-              <line x1="3" y1="18" x2="3.01" y2="18"></line>
-            </svg>
-          </button>
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            className={`p-2 rounded hover:bg-gray-200 ${editor.isActive('orderedList') ? 'bg-gray-200' : ''}`}
-            title="Numbered List"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="10" y1="6" x2="21" y2="6"></line>
-              <line x1="10" y1="12" x2="21" y2="12"></line>
-              <line x1="10" y1="18" x2="21" y2="18"></line>
-              <path d="M4 6h1v4"></path>
-              <path d="M4 10h2"></path>
-              <path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"></path>
-            </svg>
-          </button>
-          
-          {/* Blockquote */}
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleBlockquote().run()}
-            className={`p-2 rounded hover:bg-gray-200 ${editor.isActive('blockquote') ? 'bg-gray-200' : ''}`}
-            title="Blockquote"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-          </button>
-          
-          {/* Horizontal Rule */}
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().setHorizontalRule().run()}
-            className="p-2 rounded hover:bg-gray-200"
-            title="Horizontal Line"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-          </button>
-          
-          {/* Link */}
-          <button
-            type="button"
-            onClick={() => {
-              const previousUrl = editor.getAttributes('link').href
-              const url = window.prompt('URL', previousUrl)
-
-              if (url === null) return
-              if (url === '') {
-                editor.chain().focus().extendMarkRange('link').unsetLink()
-                return
-              }
-              editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
-            }}
-            className={`p-2 rounded hover:bg-gray-200 ${editor.isActive('link') ? 'bg-gray-200' : ''}`}
-            title="Link"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-            </svg>
-          </button>
-        </div>
-        
-        {/* Editor Content */}
-        <div className="relative">
-          <EditorContent 
-            editor={editor} 
-            className="h-[350px] overflow-auto p-4 border border-gray-300 rounded-b-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
-          />
-          <button
-            type="button"
-            onClick={generateContent}
-            disabled={!data.title || generating}
-            className={`absolute right-2 bottom-2 px-4 py-2 text-sm rounded-md flex items-center ${!data.title || generating ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 text-white'}`}
-          >
-            {generating ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Generating...
-              </>
-            ) : (
-              <>
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                </svg>
-                Generate with AI
-              </>
-            )}
-          </button>
-        </div>
+    <div className="max-w-5xl mx-auto">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Create New Blog</h1>
+        <p className="text-gray-500 text-sm mt-1">Share your thoughts with the world</p>
       </div>
 
-      <p className='text-xl font-medium text-gray-700 mt-6'>Blog Category</p>
-      <select 
-        name="category" 
-        onChange={handleChange} 
-        value={data.category} 
-        className='w-40 mt-4 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-      >
-        <option value="Politics">Politics</option>
-        <option value="Wellness">Wellness</option>
-        <option value="Culture">Culture</option>
-        <option value="Lifestyle">Lifestyle</option>
-      </select>
+      <form className="space-y-8" onSubmit={handleSubmit}>
+        
+        {/* Thumbnail Upload */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">Thumbnail Image</label>
+          <label htmlFor="image" className="cursor-pointer inline-block">
+            {!image ? (
+              <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 w-40 h-32 flex flex-col items-center justify-center hover:border-indigo-500 transition-colors bg-gray-50">
+                <Image src={assets.upload_area} width={40} height={40} alt='Upload' className='opacity-50' />
+                <p className="text-xs text-gray-400 mt-2">Click to upload</p>
+              </div>
+            ) : (
+              <div className="relative w-40 h-32 rounded-xl overflow-hidden border-2 border-indigo-200 shadow-sm">
+                <img src={URL.createObjectURL(image)} alt='Preview' className='w-full h-full object-cover' />
+                <button
+                  type="button"
+                  onClick={() => setImage(null)}
+                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            )}
+          </label>
+          <input name='authorImg' type="file" onChange={(e) => setImage(e.target.files[0])} id='image' hidden />
+          <p className="text-xs text-gray-400 mt-2">Recommended: 1200x800px, JPG or PNG</p>
+        </div>
 
-      <button
-        type='submit'
-        disabled={!data.title || !data.description || !image || loading}
-        className={`mt-8 w-40 h-12 rounded-xl mb-5 flex items-center justify-center ${!data.title || !data.description || !image || loading ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 text-white'}`}
-      >
-        {loading ? (
-          <>
-            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Adding...
-          </>
-        ) : 'Add Blog'}
-      </button>
-    </form>
+        {/* Title */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">Blog Title</label>
+          <input 
+            onChange={handleChange} 
+            value={data.title} 
+            name='title' 
+            type="text" 
+            className='w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition'
+            placeholder='Enter an engaging title...'
+          />
+        </div>
+
+        {/* Content Editor */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">Content</label>
+          
+          {/* Toolbar */}
+          <div className="flex flex-wrap gap-1 p-2 border border-gray-300 bg-gray-50 rounded-t-xl">
+            <button type="button" onClick={() => editor.chain().focus().toggleBold().run()} className={`p-2 rounded hover:bg-gray-200 transition ${editor.isActive('bold') ? 'bg-gray-200' : ''}`} title="Bold"><strong>B</strong></button>
+            <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()} className={`p-2 rounded hover:bg-gray-200 transition ${editor.isActive('italic') ? 'bg-gray-200' : ''}`} title="Italic"><em>I</em></button>
+            <button type="button" onClick={() => editor.chain().focus().toggleUnderline().run()} className={`p-2 rounded hover:bg-gray-200 transition ${editor.isActive('underline') ? 'bg-gray-200' : ''}`} title="Underline"><u>U</u></button>
+            <div className="w-px h-6 bg-gray-300 mx-1"></div>
+            <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()} className={`p-2 rounded hover:bg-gray-200 transition text-sm font-bold ${editor.isActive('heading', { level: 1 }) ? 'bg-gray-200' : ''}`}>H1</button>
+            <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} className={`p-2 rounded hover:bg-gray-200 transition text-sm font-bold ${editor.isActive('heading', { level: 2 }) ? 'bg-gray-200' : ''}`}>H2</button>
+            <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} className={`p-2 rounded hover:bg-gray-200 transition text-sm font-bold ${editor.isActive('heading', { level: 3 }) ? 'bg-gray-200' : ''}`}>H3</button>
+            <div className="w-px h-6 bg-gray-300 mx-1"></div>
+            <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()} className={`p-2 rounded hover:bg-gray-200 transition ${editor.isActive('bulletList') ? 'bg-gray-200' : ''}`} title="Bullet List">• List</button>
+            <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()} className={`p-2 rounded hover:bg-gray-200 transition ${editor.isActive('orderedList') ? 'bg-gray-200' : ''}`} title="Numbered List">1. List</button>
+            <button type="button" onClick={() => editor.chain().focus().toggleBlockquote().run()} className={`p-2 rounded hover:bg-gray-200 transition ${editor.isActive('blockquote') ? 'bg-gray-200' : ''}`} title="Quote">“ ”</button>
+            <button type="button" onClick={() => editor.chain().focus().setHorizontalRule().run()} className="p-2 rounded hover:bg-gray-200 transition" title="Divider">—</button>
+            <button type="button" onClick={() => { const url = window.prompt('URL'); if (url) editor.chain().focus().setLink({ href: url }).run() }} className={`p-2 rounded hover:bg-gray-200 transition ${editor.isActive('link') ? 'bg-gray-200' : ''}`} title="Link">🔗</button>
+          </div>
+          
+          {/* Editor */}
+          <div className="relative">
+            <EditorContent editor={editor} className="min-h-[350px] p-4 border border-t-0 border-gray-300 rounded-b-xl focus:outline-none prose max-w-none" />
+            <button
+              type="button"
+              onClick={generateContent}
+              disabled={!data.title || generating}
+              className={`absolute bottom-3 right-3 px-4 py-2 text-sm rounded-lg flex items-center gap-2 transition ${
+                !data.title || generating 
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
+                  : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:shadow-lg'
+              }`}
+            >
+              {generating ? (
+                <><svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>Generating...</>
+              ) : (
+                <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>AI Generate</>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Category */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">Category</label>
+          <select 
+            name="category" 
+            onChange={handleChange} 
+            value={data.category} 
+            className='w-48 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white'
+          >
+            <option value="Politics">🏛️ Politics</option>
+            <option value="Wellness">🧘 Wellness</option>
+            <option value="Culture">🎭 Culture</option>
+            <option value="Lifestyle">🌿 Lifestyle</option>
+          </select>
+        </div>
+
+        {/* Submit */}
+        <button
+          type='submit'
+          disabled={!data.title || !data.description || !image || loading}
+          className={`px-8 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 ${
+            !data.title || !data.description || !image || loading
+              ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:shadow-lg hover:scale-[1.02]'
+          }`}
+        >
+          {loading ? (
+            <><svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>Publishing...</>
+          ) : (
+            <>📝 Publish Blog</>
+          )}
+        </button>
+      </form>
+    </div>
   )
 }
 

@@ -4,23 +4,15 @@ import { useAuth } from '@/app/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
+import Navbar from '@/app/Components/Navbar';
+import Footer from '@/app/Components/Footer';
 
 export default function LoginPage() {
   const { user, login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [remember, setRemember] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
-  // Load saved email if "Remember Me"
-  useEffect(() => {
-    const savedEmail = localStorage.getItem('rememberEmail');
-    if (savedEmail) {
-      setEmail(savedEmail);
-      setRemember(true);
-    }
-  }, []);
 
   useEffect(() => {
     if (user) {
@@ -59,14 +51,6 @@ export default function LoginPage() {
         return;
       }
 
-      // Remember Me logic
-      if (remember) {
-        localStorage.setItem('rememberEmail', email);
-        toast.success('Email saved for next time');
-      } else {
-        localStorage.removeItem('rememberEmail');
-      }
-
       toast.success('Login successful! Redirecting...');
       setTimeout(() => {
         router.push('/');
@@ -79,74 +63,92 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 to-gray-100 px-4">
-      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl space-y-6">
-        
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-800">Welcome Back 👋</h2>
-          <p className="text-gray-500 text-sm mt-1">Sign in to continue</p>
-        </div>
-
-        <form className="space-y-4" onSubmit={handleSubmit}>
+    <>
+      <Navbar />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-16">
+        <div className="w-full max-w-md">
           
-          <input
-            type="email"
-            placeholder="Email address"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none"
-          />
-
-          <input
-            type="password"
-            placeholder="Password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none"
-          />
-
-          <div className="flex items-center justify-between text-sm">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={remember}
-                onChange={() => {
-                  if (!remember) {
-                    toast.success('Email will be remembered');
-                  } else {
-                    toast.info('Email will not be saved');
-                  }
-                  setRemember(!remember);
-                }}
-                className="accent-indigo-600"
-              />
-              Remember me
-            </label>
-
-            <Link href="/auth/forgot-password" className="text-indigo-600 hover:underline">
-              Forgot password?
-            </Link>
+          {/* Header Section */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Welcome Back 👋</h1>
+            <p className="text-gray-500">Sign in to your account</p>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition duration-200 disabled:opacity-50"
-          >
-            {loading ? 'Signing in...' : 'Sign in'}
-          </button>
-        </form>
+          {/* Login Card */}
+          <div className="bg-white rounded-2xl shadow-xl p-8">
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              
+              {/* Email Field */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  placeholder="you@example.com"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                />
+              </div>
 
-        <p className="text-center text-sm text-gray-600">
-          Don’t have an account?{' '}
-          <Link href="/auth/signup" className="text-indigo-600 font-medium hover:underline">
-            Sign up
-          </Link>
-        </p>
+              {/* Password Field */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                />
+              </div>
 
+              {/* Forgot Password Link */}
+              <div className="text-right">
+                <Link 
+                  href="/auth/forgot-password" 
+                  className="text-sm text-indigo-600 hover:text-indigo-700 hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:transform-none"
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Signing in...
+                  </span>
+                ) : (
+                  'Sign In'
+                )}
+              </button>
+            </form>
+
+            {/* Sign Up Link */}
+            <p className="text-center text-sm text-gray-600 mt-6">
+              Don't have an account?{' '}
+              <Link href="/auth/signup" className="text-indigo-600 font-semibold hover:text-indigo-700 hover:underline">
+                Create account
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 }
